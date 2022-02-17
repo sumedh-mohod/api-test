@@ -1,75 +1,33 @@
-import React,{ useState} from 'react';
-import CountryList from './CountryList';
+import React, { useEffect, useState } from "react"
 
-function Test() {
-  
-    const [tags, setTags] = useState([]);
-    const [country, setCountry] = useState([]);
+const Test = () => {
+  const [users, setUsers] = useState([])
 
-  async function countriesHandler() {
-    
-    const response = await fetch('http://a2camp.xyz/api/v1/countries');
-    const data = await response.json();
-
-    const countries = data.map((Data) => {
-      return {
-
-        id: Data.uuid,
-        country: Data.country,
-      };
-    });
-    console.log(countries);
-    // setCountry(countries);
+  const fetchData = () => {
+    fetch("http://a2camp.xyz/api/v1/countries")
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        setUsers(data)
+      })
   }
 
-  async function tagHandler() {
-    
-    const response = await fetch('http://a2camp.xyz/api/v1/course-tags');
-    const data = await response.json();
-
-    const tag = data.map((Data) => {
-      return {
-        id: Data.uuid,
-        name: Data.name,
-      };
-    });
-    // setTags(tag);
-    console.log(tag)
-  }
-
-  async function uniHandler() {
-    
-  
-    const response = await fetch('http://a2camp.xyz/api/v1/level-of-studies');
-    const data = await response.json();
-
-    const uni = data.map((Data) => {
-      return {
-        id: Data.uuid,
-        major: Data.major,
-      };
-    });
-    console.log(uni);
-  }
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
-    <React.Fragment>
-      <section>
-        <button onClick={countriesHandler}>Search country</button>
-        <CountryList  country={country}/>
-      </section>
-      <br/>
-      <section>
-        <button onClick={tagHandler}>Search tag</button>
-        <div>{tags}</div>
-      </section>
-      <br/>
-      <section>
-        <button onClick={uniHandler}>Search level of study</button>
-      </section>
-     
-    </React.Fragment>
-  );
+    <div>
+      {users.length > 0 && (
+        <ul>
+          {users.map(user => (
+            <li key={user.uuid}>{user.country}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
 }
 
 export default Test;
